@@ -4,6 +4,55 @@
 
 ---
 
+## Prerequisites: Kaggle API Authentication
+
+### Setup (One-time)
+
+```bash
+# Option A: Interactive login (creates ~/.kaggle/kaggle.json)
+kaggle auth login
+
+# Option B: Manual token setup
+# 1. Go to https://www.kaggle.com/settings/account
+# 2. Click "Create New Token" → downloads kaggle.json
+# 3. Move to ~/.kaggle/kaggle.json
+# 4. chmod 600 ~/.kaggle/kaggle.json (Linux/Mac)
+```
+
+### Token Usage (Every Session)
+
+When starting a new shell session, set the API token first before running any `kaggle` commands:
+
+```bash
+# PowerShell (Windows)
+$env:KAGGLE_API_TOKEN = "KGAT_xxxxxxxxxxxxxxxxxxxx"
+
+# Bash/Zsh (Linux/Mac)
+export KAGGLE_API_TOKEN="KGAT_xxxxxxxxxxxxxxxxxxxx"
+
+# Then run your kaggle commands
+kaggle kernels push -p . --accelerator NvidiaTeslaT4
+kaggle kernels status shakil19/linggym-kernel
+kaggle kernels output shakil19/linggym-kernel -p ./output
+```
+
+**Important:** The environment variable must be set **before** each `kaggle` command in a new terminal session. It does not persist across shell restarts. Your token can be found in `~/.kaggle/kaggle.json` (field: `key`).
+
+### Quick Token Reference
+
+```bash
+# Find your token (if using file-based auth)
+cat ~/.kaggle/kaggle.json | grep key
+
+# Set it for the current shell
+export KAGGLE_API_TOKEN="paste_key_here"
+
+# Verify it's set
+echo $KAGGLE_API_TOKEN
+```
+
+---
+
 ## Step 1: Upload Dataset to Kaggle
 
 ### Status: ✅ COMPLETED
@@ -98,7 +147,10 @@ ls -la
 ### Commands
 
 ```bash
-# 1. Verify metadata is correct
+# 1. Set Kaggle API token (required each session)
+export KAGGLE_API_TOKEN="KGAT_your_token_here"
+
+# 2. Verify metadata is correct
 cat kernel-metadata.json
 
 # Expected kernel-metadata.json:
@@ -116,10 +168,10 @@ cat kernel-metadata.json
   ]
 }
 
-# 2. Push kernel to Kaggle
-kaggle kernels push -p .
+# 3. Push kernel to Kaggle with T4 accelerator
+kaggle kernels push -p . --accelerator NvidiaTeslaT4
 
-# 3. Verify push succeeded
+# 4. Verify push succeeded
 kaggle kernels list -u shakil19
 ```
 
@@ -168,11 +220,30 @@ except:
 ### Live Monitoring
 
 ```bash
-# Option 1: Check status (quick)
+# Set token first (if in a new shell session)
+export KAGGLE_API_TOKEN="KGAT_your_token_here"
+
+# Option 1: Check status once (quick)
 kaggle kernels status shakil19/linggym-kernel
 
-# Option 2: Continuous monitoring (recommended)
-watch -n 5 'kaggle kernels status shakil19/linggym-kernel'
+# Option 2: Continuous monitoring loop (recommended)
+# PowerShell:
+$env:KAGGLE_API_TOKEN = "KGAT_your_token_here"
+do {
+    $status = kaggle kernels status shakil19/linggym-kernel 2>&1 | Select-String 'status'
+    if ($status) {
+        Write-Host "$(Get-Date -Format 'HH:mm:ss') - $status"
+        if ($status -match 'complete|error|fail') { break }
+    }
+    Start-Sleep -Seconds 20
+} while ($true)
+
+# Bash:
+export KAGGLE_API_TOKEN="KGAT_your_token_here"
+while true; do
+  kaggle kernels status shakil19/linggym-kernel
+  sleep 20
+done
 
 # Option 3: Web Interface (best experience)
 # Open: https://www.kaggle.com/code/shakil19/linggym-kernel
@@ -247,12 +318,17 @@ cat logs/__results__.html | grep -o "Accuracy: [0-9.]*"
 ### Quick Download
 
 ```bash
-# Download all outputs
+# Set token first (if in a new shell session)
+export KAGGLE_API_TOKEN="KGAT_your_token_here"
+
+# Download all outputs to /kaggle/working (the only persisted directory)
 kaggle kernels output shakil19/linggym-kernel -p ./kaggle-results/
 
 # Verify download
 ls -la kaggle-results/
 ```
+
+**Note:** Kaggle only persists `/kaggle/working` for retrieval. Output written to `/kaggle/output` is lost. The script writes to `/kaggle/working/predictions.csv`, `/kaggle/working/summary.json`, etc.
 
 ### Expected Files
 
