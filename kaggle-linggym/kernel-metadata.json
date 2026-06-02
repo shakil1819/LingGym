@@ -1,0 +1,24 @@
+{
+  "id": "shakil19/linggym-kernel",
+  "title": "LingGym Kernel",
+  "code_file": "linggym_inference.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": true,
+  "enable_tpu": false,
+  "dataset_sources": [
+    "shakil19/linggym-benchmark"
+  ],
+  "dependency_sources": [],
+  "competition_sources": [],
+  "model_sources": [],
+  "tags": [
+    "linguistics",
+    "nlp",
+    "llm",
+    "benchmark",
+    "metalinguistic-reasoning"
+  ]
+}

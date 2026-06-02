@@ -1,0 +1,23 @@
+{
+  "id": "shakil19/linggym-benchmark",
+  "title": "LingGym Benchmark - Fwe (Smoke Test)",
+  "subtitle": "Fwe language - 147 multiple-choice questions for LLM metalinguistic reasoning",
+  "description": "LingGym benchmark dataset containing Interlinear Glossed Text (IGT) examples with multiple-choice questions for evaluating LLM metalinguistic reasoning. Fwe language subset - 147 questions across 7 files.",
+  "isPrivate": false,
+  "keywords": [
+    "linguistics",
+    "nlp",
+    "benchmark",
+    "metalinguistic-reasoning",
+    "igt",
+    "low-resource-languages",
+    "llm-evaluation"
+  ],
+  "licenses": [
+    {
+      "name": "CC0-1.0"
+    }
+  ],
+  "owner": "shakil19",
+  "collaborators": []
+}
